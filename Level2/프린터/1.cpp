@@ -1,4 +1,5 @@
 // 0.1ms
+// 우선순위 큐, pair 자료형 사용
 #include <string>
 #include <vector>
 #include <queue>
