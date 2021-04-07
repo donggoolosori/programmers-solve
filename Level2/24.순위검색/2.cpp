@@ -1,4 +1,7 @@
-// 810.52ms
+/*
+810.52ms
+4차원 array사용
+*/
 #include <string>
 #include <vector>
 #include <algorithm>
