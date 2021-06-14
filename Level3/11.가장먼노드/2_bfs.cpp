@@ -9,28 +9,23 @@ int maxDist;
 vector<int> graph[20001];
 struct Node {
   int idx, dist;
-  bool operator<(const Node &b) const { return dist > b.dist; }
 };
 
-void dijkstra() {
-  priority_queue<Node> pq;
+void bfs() {
+  queue<Node> q;
+  q.push({1, 1});
+  cache[1] = 1;
 
-  cache[1] = 0;
-  pq.push({1, 0});
-
-  while (!pq.empty()) {
-    int curr = pq.top().idx;
-    int dist = pq.top().dist;
-    pq.pop();
-
-    if (dist > cache[curr]) continue;
+  while (!q.empty()) {
+    int curr = q.front().idx;
+    int dist = q.front().dist;
+    q.pop();
 
     for (const auto &next : graph[curr]) {
-      if (dist + 1 >= cache[next]) continue;
+      if (cache[next] != 0) continue;
 
       cache[next] = dist + 1;
-      pq.push({next, dist + 1});
-
+      q.push({next, dist + 1});
       if (cache[next] > maxDist) maxDist = cache[next];
     }
   }
@@ -44,8 +39,7 @@ int solution(int n, vector<vector<int>> edge) {
     graph[b].push_back(a);
   }
 
-  for (int i = 1; i <= n; i++) cache[i] = 2e9;
-  dijkstra();
+  bfs();
   for (int i = 2; i <= n; i++) {
     if (cache[i] == maxDist) answer++;
   }
