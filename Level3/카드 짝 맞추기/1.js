@@ -1,3 +1,4 @@
+// 75점
 function getFriendsAndPos(board) {
   const friends = [];
   const posMap = {};
@@ -37,6 +38,18 @@ function ctrlMove(y, x, dy, dx, board) {
   }
 }
 
+function copyBoard(board) {
+  const newBoard = Array.from({ length: 4 }, () =>
+    Array.from({ length: 4 }, () => 0)
+  );
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      newBoard[i][j] = board[i][j];
+    }
+  }
+  return newBoard;
+}
+
 function solution(board, r, c) {
   const { friends, posMap } = getFriendsAndPos(board);
   const dy = [-1, 0, 0, 1],
@@ -46,7 +59,8 @@ function solution(board, r, c) {
     cy = r,
     cx = c;
 
-  function bfs(ty, tx) {
+  function bfs(ty, tx, newBoard) {
+    newBoard[cy][cx] = 0;
     const q = [],
       visit = Array.from({ length: 4 }, () => [0, 0, 0, 0]);
     q.push({ y: cy, x: cx, count: 0 });
@@ -58,6 +72,7 @@ function solution(board, r, c) {
 
       if (y === ty && x === tx) {
         (cy = ty), (cx = tx);
+
         return count + 1;
       }
 
@@ -66,10 +81,11 @@ function solution(board, r, c) {
           nx = x + dx[i];
         if (!isValidPos(ny, nx)) continue;
         if (visit[ny][nx]) continue;
+
         visit[ny][nx] = true;
         q.push({ y: ny, x: nx, count: count + 1 });
 
-        const [nny, nnx] = ctrlMove(y, x, dy[i], dx[i], board);
+        const [nny, nnx] = ctrlMove(ny, nx, dy[i], dx[i], newBoard);
 
         if (!visit[nny][nnx]) {
           visit[nny][nnx] = true;
@@ -82,7 +98,9 @@ function solution(board, r, c) {
   }
 
   function calcMinCtrl(positions) {
-    return positions.reduce((acc, pos) => acc + bfs(pos.y, pos.x), 0);
+    (cy = r), (cx = c);
+    const newBoard = copyBoard(board);
+    return positions.reduce((acc, pos) => acc + bfs(pos.y, pos.x, newBoard), 0);
   }
 
   function permutation(made, bit, L) {
